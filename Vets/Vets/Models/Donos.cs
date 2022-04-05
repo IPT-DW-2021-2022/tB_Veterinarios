@@ -22,7 +22,7 @@ namespace Vets.Models {
       [Required(ErrorMessage = "O {0} é de preenchimento obrigatório")]
       [StringLength(30, ErrorMessage = "O {0} não pode ter mais do que {1} caracteres.")]
       [RegularExpression("[A-ZÂÓÍa-záéíóúàèìòùâêîôûãõäëïöüñç '-]+",
-                          ErrorMessage ="No {0} só são aceites letras")]
+                          ErrorMessage = "No {0} só são aceites letras")]
       public string Nome { get; set; }
 
       /// <summary>
@@ -40,6 +40,12 @@ namespace Vets.Models {
       [StringLength(1, ErrorMessage = "O {0} só aceita um caráter.")]
       [RegularExpression("[FfMm]", ErrorMessage = "No {0} só se aceitam as letras F ou M.")]
       public string Sexo { get; set; }
+
+      /// <summary>
+      /// Email
+      /// </summary>
+      [EmailAddress(ErrorMessage = "Introduza um email correto, por favor.")]
+      public string Email { get; set; }
 
       /// <summary>
       /// Lista dos animais de quem o Dono é dono
