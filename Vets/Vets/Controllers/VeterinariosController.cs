@@ -17,8 +17,16 @@ namespace Vets.Controllers {
       /// </summary>
       private readonly ApplicationDbContext _context;
 
-      public VeterinariosController(ApplicationDbContext context) {
+      /// <summary>
+      /// esta variável vai conter os dados do servidor
+      /// </summary>
+      private readonly IWebHostEnvironment _webHostEnvironment;
+
+      public VeterinariosController(
+         ApplicationDbContext context,
+         IWebHostEnvironment webHostEnvironment) {
          _context = context;
+         _webHostEnvironment = webHostEnvironment;
       }
 
 
@@ -99,7 +107,7 @@ namespace Vets.Controllers {
           *       devolver o controlo da app à view
           *    else
           *       - definir o nome a atribuir à imagem
-          *       - atribuir aos dados do novo vet, o mome do ficheiro da imagem
+          *       - atribuir aos dados do novo vet, o nome do ficheiro da imagem
           *       - guardar a imagem no disco rígido do servidor
           * */
 
@@ -107,7 +115,7 @@ namespace Vets.Controllers {
             veterinario.Fotografia = "noVet.png";
          }
          else {
-            if(!(fotoVet.ContentType =="image/png" || fotoVet.ContentType == "image/jpeg")) {
+            if (!(fotoVet.ContentType == "image/png" || fotoVet.ContentType == "image/jpeg")) {
                // criar mensagem de erro
                ModelState.AddModelError("", "Por favor, adicione um ficheiro .png ou .jpg");
                // revolver o controlo da app à View
@@ -116,26 +124,74 @@ namespace Vets.Controllers {
             }
             else {
                // temos ficheiro e é uma imagem...
-
-
-
-
-
+               //++++++++++++++++++++++++++++++++
+               // definir o nome da foto
+               Guid g = Guid.NewGuid();
+               string nomeFoto = veterinario.NumCedulaProf + "_" + g.ToString();
+               string extensaoFoto = Path.GetExtension(fotoVet.FileName).ToLower();
+               nomeFoto += extensaoFoto;
+               // atribuir ao vet o nome da sua foto
+               veterinario.Fotografia = nomeFoto;
             }
          }
 
-
-
-
-
-
+         // avaliar se os dados fornecidos pelo utilizador
+         // estão de acordo com as regras do Model
          if (ModelState.IsValid) {
-            _context.Add(veterinario);
-            await _context.SaveChangesAsync();
+            try {
+               // adicionar os dados à BD
+               _context.Add(veterinario);
+               // consolidar esses dados (commit)
+               await _context.SaveChangesAsync();
+            }
+            catch (Exception ex) {
+               // é da nossa responsabilidade!!! tratarmos da exceção
+
+               // registar no disco rígido do servidor todos os dados da operação
+               //     - data + hora
+               //     - nome do utilizador
+               //     - nome do controller + método
+               //     - dados do erro (ex)
+               //     - outros dados considerados úteis
+               // eventualmente, tentar guardar na (numa) base de dados os dados do erro
+               // eventualmente, notificar o Administrador da app do erro
+
+               // no nosso caso,
+               // criar uma msg de erro
+               ModelState.AddModelError("", "Ocorreu um erro com a operação de guardar os dados do veterinário " + veterinario.Nome);
+               // devolver controlo à View
+               return View(veterinario);
+            }
+
+            //+++++++++++++++++++++++++++++++++++++++
+            // concretizar a ação de guardar o ficheiro da foto
+            //+++++++++++++++++++++++++++++++++++++++
+            if (fotoVet != null) {
+               // onde o ficheiro vai ser guardado?
+               string nomeLocalizacaoFicheiro = _webHostEnvironment.WebRootPath;
+               nomeLocalizacaoFicheiro = Path.Combine(nomeLocalizacaoFicheiro, "Fotos");
+               // avaliar se a pasta 'Fotos' não existe
+               if (!Directory.Exists(nomeLocalizacaoFicheiro)) {
+                  Directory.CreateDirectory(nomeLocalizacaoFicheiro);
+               }
+               // nome do documento a guardar
+               string nomeDaFoto = Path.Combine(nomeLocalizacaoFicheiro, veterinario.Fotografia);
+               // criar o objeto que vai manipular o ficheiro
+               using var stream = new FileStream(nomeDaFoto, FileMode.Create);
+               // guardar no disco rígido
+               await fotoVet.CopyToAsync(stream);
+            }
+
+            // devolver o controlo da app à View
             return RedirectToAction(nameof(Index));
          }
          return View(veterinario);
       }
+
+
+
+
+
 
       // GET: Veterinarios/Edit/5
       public async Task<IActionResult> Edit(int? id) {
@@ -197,9 +253,21 @@ namespace Vets.Controllers {
       [HttpPost, ActionName("Delete")]
       [ValidateAntiForgeryToken]
       public async Task<IActionResult> DeleteConfirmed(int id) {
-         var veterinarios = await _context.Veterinarios.FindAsync(id);
-         _context.Veterinarios.Remove(veterinarios);
-         await _context.SaveChangesAsync();
+
+         try {
+            var veterinario = await _context.Veterinarios.FindAsync(id);
+            _context.Veterinarios.Remove(veterinario);
+            await _context.SaveChangesAsync();
+
+            // remover o ficheiro com a foto do Veterinário
+            // se a foto NÃO FOR a 'noVet.png'
+         }
+         catch (Exception) {
+            //   throw;
+            // não esquecer, tratar da exceção
+         }
+
+
          return RedirectToAction(nameof(Index));
       }
 
