@@ -211,18 +211,36 @@ namespace Vets.Controllers {
       // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
       [HttpPost]
       [ValidateAntiForgeryToken]
-      public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,NumCedulaProf,Fotografia")] Veterinarios veterinarios) {
-         if (id != veterinarios.Id) {
+      public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,NumCedulaProf,Fotografia")] Veterinarios veterinario, IFormFile fotoVet) {
+         if (id != veterinario.Id) {
             return NotFound();
          }
 
+         /*
+          * só se altera a foto do Vet, se for carregado
+          * algum ficheiro, e mesmo assim, só se for uma imagem
+          * 
+          * se há uma nova imagem, qual o seu nome?
+          * vamos manter o nome da foto antiga ou dar um novo?
+          * se mantiver, pode haver problemas com a cache do browser
+          * se for novo, tenho de apagar o ficheiro antigo, 
+          *     se não for o 'noVet.png'
+          *     
+          * Se o veterinário quiser voltar a usar a imagem
+          * 'noVet.png' é necessário colocar essa pergunta 
+          * na interface...
+          * 
+          */ 
+
+
+
          if (ModelState.IsValid) {
             try {
-               _context.Update(veterinarios);
+               _context.Update(veterinario);
                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException) {
-               if (!VeterinariosExists(veterinarios.Id)) {
+               if (!VeterinariosExists(veterinario.Id)) {
                   return NotFound();
                }
                else {
@@ -231,7 +249,7 @@ namespace Vets.Controllers {
             }
             return RedirectToAction(nameof(Index));
          }
-         return View(veterinarios);
+         return View(veterinario);
       }
 
       // GET: Veterinarios/Delete/5
