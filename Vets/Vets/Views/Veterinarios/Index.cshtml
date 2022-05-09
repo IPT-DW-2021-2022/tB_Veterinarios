@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Vets.Models.Veterinarios>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Lista dos Veterinários da Clínica</h1>
+
+<p>
+    <a asp-action="Create">Adicionar Veterinário</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+                @* HTML Helper
+                    mostra o 'Nome' do atributo
+                *@
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumCedulaProf)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fotografia)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+            @*  a palavra 'Model' é uma palavra reservada.
+                Representa o conjunto de dados recebidos dentro da View
+            *@
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                    @* HTML Helper
+                        Este mostra o conteúdo do atributo
+                    *@
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumCedulaProf)
+                </td>
+                <td>
+                    @* @Html.DisplayFor(modelItem => item.Fotografia)  *@
+                    @*   mostra a fotografia, no ecrã *@
+                    <a href="~/Fotos/@item.Fotografia" target="_blank">
+                        <img src="~/Fotos/@Html.DisplayFor(modelItem => item.Fotografia)"
+                         alt="Foto do(a) veterinário(a) @item.Nome"
+                         title="@item.Nome"
+                         height="50" />
+                    </a>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Remover</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
