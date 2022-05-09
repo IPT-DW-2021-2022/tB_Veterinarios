@@ -13,6 +13,18 @@ namespace Vets.Models {
 
       public string Observacoes { get; set; }
 
+      /// <summary>
+      /// este atributo serve para auxiliar à introdução
+      /// de dados no atributo 'decimal'
+      /// </summary>
+      [NotMapped] // indica à EF que não deve representar este atributo na base de dados
+      [Required(ErrorMessage = "Preencha, pf, o valor da consulta")]
+      [StringLength(11)]
+      [RegularExpression("[0-9]{1,8}[,.]?[0-9]{0,2}",
+                          ErrorMessage = "Indique, por favor, o valor da consulta...")]
+      public string AuxValorConsulta { get; set; }
+
+
       public decimal ValorConsulta { get; set; }
 
 

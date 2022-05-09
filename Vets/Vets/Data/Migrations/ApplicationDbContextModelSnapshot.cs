@@ -257,7 +257,7 @@ namespace Vets.Data.Migrations
 
                     b.HasIndex("DonoFK");
 
-                    b.ToTable("Animais");
+                    b.ToTable("Animais", (string)null);
 
                     b.HasData(
                         new
@@ -401,7 +401,7 @@ namespace Vets.Data.Migrations
 
                     b.HasIndex("VeterinarioFK");
 
-                    b.ToTable("Consultas");
+                    b.ToTable("Consultas", (string)null);
                 });
 
             modelBuilder.Entity("Vets.Models.Donos", b =>
@@ -431,7 +431,7 @@ namespace Vets.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Donos");
+                    b.ToTable("Donos", (string)null);
 
                     b.HasData(
                         new
@@ -483,7 +483,7 @@ namespace Vets.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Veterinarios");
+                    b.ToTable("Veterinarios", (string)null);
 
                     b.HasData(
                         new
