@@ -196,15 +196,25 @@ namespace Vets.Controllers {
       // GET: Veterinarios/Edit/5
       public async Task<IActionResult> Edit(int? id) {
          if (id == null) {
-            return NotFound();
+            return RedirectToAction("Index");
          }
 
-         var veterinarios = await _context.Veterinarios.FindAsync(id);
-         if (veterinarios == null) {
-            return NotFound();
+         var veterinario = await _context.Veterinarios.FindAsync(id);
+         if (veterinario == null) {
+            return RedirectToAction("Index");
          }
-         return View(veterinarios);
+
+         // preservar, para memória futura, os dados que não devem
+         // ser adulterados pelo utilizador no browser
+         // vamos usar 'variáveis de sessão' (equivalentes a 'cookies')
+         // podemos guardar INT e STRING
+         // - quero guardar o ID do médico veterinário
+         HttpContext.Session.SetInt32("VetID",veterinario.Id);
+
+         return View(veterinario);
       }
+
+
 
       // POST: Veterinarios/Edit/5
       // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -215,6 +225,37 @@ namespace Vets.Controllers {
          if (id != veterinario.Id) {
             return NotFound();
          }
+
+         /* confirmar se não houve adulteração de dados no browser
+          * para que isto aconteça:
+          * 1 - recuperar o valor da variável de sessão
+          * 2 - comparar este valor com os dados que chegam do browser
+          * 3 - se forem diferentes, temos um problema...
+          */
+
+         // (1)
+         var idMedicoVeterinario = HttpContext.Session.GetInt32("VetID");
+
+         /* se a variável 'idMedicoVeterinario' for nula,
+         * o que aconteceu?
+         *   - houve 'injeção' de dados através de uma ferramenta externa
+         *   - demorou-se demasiado tempo na execução da tarefa
+         */
+         if (idMedicoVeterinario == null) {
+            // neste caso o q fazer????
+            ModelState.AddModelError("", "Demorou demasiado tempo a executar a tarefa de edição");
+            return View(veterinario);
+         }
+
+         // (3)
+         if (idMedicoVeterinario != veterinario.Id) {
+            // temos problemas...
+            // o que vamos fazer????
+            return RedirectToAction("Index");
+         }
+
+
+
 
          /*
           * só se altera a foto do Vet, se for carregado
