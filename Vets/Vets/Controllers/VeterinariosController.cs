@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,8 @@ using Vets.Data;
 using Vets.Models;
 
 namespace Vets.Controllers {
+
+   [Authorize]
    public class VeterinariosController : Controller {
       /// <summary>
       /// cria uma instancia de acesso à Base de Dados
@@ -33,6 +36,7 @@ namespace Vets.Controllers {
 
 
       // GET: Veterinarios
+      [AllowAnonymous]
       public async Task<IActionResult> Index() {
          /* acesso à base de dados
           * SELECT *
