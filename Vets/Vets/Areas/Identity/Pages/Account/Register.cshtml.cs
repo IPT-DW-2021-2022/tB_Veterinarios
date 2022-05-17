@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
 using Vets.Data;
+using Vets.Models;
 
 namespace Vets.Areas.Identity.Pages.Account {
    public class RegisterModel : PageModel {
@@ -31,18 +32,25 @@ namespace Vets.Areas.Identity.Pages.Account {
       private readonly ILogger<RegisterModel> _logger;
       private readonly IEmailSender _emailSender;
 
+      /// <summary>
+      /// classe q representa o acesso à BD do sistema
+      /// </summary>
+      private readonly ApplicationDbContext _context;
+
       public RegisterModel(
           UserManager<ApplicationUser> userManager,
           IUserStore<ApplicationUser> userStore,
           SignInManager<ApplicationUser> signInManager,
           ILogger<RegisterModel> logger,
-          IEmailSender emailSender) {
+          IEmailSender emailSender,
+          ApplicationDbContext context) {
          _userManager = userManager;
          _userStore = userStore;
          _emailStore = GetEmailStore();
          _signInManager = signInManager;
          _logger = logger;
          _emailSender = emailSender;
+         _context = context;
       }
 
       /// <summary>
@@ -87,11 +95,17 @@ namespace Vets.Areas.Identity.Pages.Account {
          [Compare("Password", ErrorMessage = "A password e a sua confirmação não correspondem.")]
          public string ConfirmPassword { get; set; }
 
+         ///// <summary>
+         ///// nome de batismo do utilizador
+         ///// </summary>
+         //[Required]
+         //public string NomeDoUtilizador { get; set; }
+
          /// <summary>
-         /// nome de batismo do utilizador
+         /// dados do dono que ficará associado à autenticação
          /// </summary>
-         [Required]
-         public string NomeDoUtilizador { get; set; }
+         public Donos Dono { get; set; }
+
 
       }
 
@@ -115,17 +129,18 @@ namespace Vets.Areas.Identity.Pages.Account {
       public async Task<IActionResult> OnPostAsync(string returnUrl = null) {
 
          returnUrl ??= Url.Content("~/");
-         ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-   
+         // não vou utilizar este tipo de autenticação
+         //  ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
          if (ModelState.IsValid) {
             var user = CreateUser();
 
             await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
             await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-          
+
             // atribuir o nome de batismo e a data de registo ao novo utilizador
-            user.NomeDoUtilizador=Input.NomeDoUtilizador;
-            user.DataRegisto=DateTime.Now;
+            user.NomeDoUtilizador = Input.Dono.Nome;
+            user.DataRegisto = DateTime.Now;
 
             // cria, efetivamente, o utilizador
             var result = await _userManager.CreateAsync(user, Input.Password);
@@ -133,6 +148,46 @@ namespace Vets.Areas.Identity.Pages.Account {
             if (result.Succeeded) {
                _logger.LogInformation("User created a new account with password.");
 
+               /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                * guardar os dados do novo DONO
+                * 1- atribuir ao novo Dono, o email
+                * 2-                        o UserID
+                * 3- guardar os dados na BD
+                */
+               // (1)
+               Input.Dono.Email = Input.Email;
+               // (2)
+               Input.Dono.UserID = user.Id;
+               try {
+                  // (3)
+                  _context.Add(Input.Dono);
+                  await _context.SaveChangesAsync();
+               }
+               catch (Exception) {
+                  // se chego aqui, aconteceu um problema
+                  // e qual é?
+                  // não conseguir guardar os dados do novo DONO
+                  // o que fazer????
+                  // eliminar o utilizador já criado
+                  await _userManager.DeleteAsync(user);
+                  // criar msg de erro a ser enviada ao utilizador
+                  ModelState.AddModelError("", "Ocorreu um erro com a criação do Utilizador");
+                  
+                  // notificar o Admin q ocorreu um erro...
+                  // escrever num ficheiro de log o erro...
+                  // etc. ...
+
+                  // devolver o controlo da app ao utilizador
+                  return Page(); // <=> return View();
+               }
+
+
+
+
+
+
+
+               // envio de mensagem a confirmar a criação da conta
                var userId = await _userManager.GetUserIdAsync(user);
                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
