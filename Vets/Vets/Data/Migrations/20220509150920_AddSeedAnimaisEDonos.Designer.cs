@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vets.Data;
 
@@ -11,9 +12,10 @@ using Vets.Data;
 namespace Vets.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220509150920_AddSeedAnimaisEDonos")]
+    partial class AddSeedAnimaisEDonos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -257,7 +259,7 @@ namespace Vets.Data.Migrations
 
                     b.HasIndex("DonoFK");
 
-                    b.ToTable("Animais", (string)null);
+                    b.ToTable("Animais");
 
                     b.HasData(
                         new
@@ -401,7 +403,7 @@ namespace Vets.Data.Migrations
 
                     b.HasIndex("VeterinarioFK");
 
-                    b.ToTable("Consultas", (string)null);
+                    b.ToTable("Consultas");
                 });
 
             modelBuilder.Entity("Vets.Models.Donos", b =>
@@ -431,7 +433,7 @@ namespace Vets.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Donos", (string)null);
+                    b.ToTable("Donos");
 
                     b.HasData(
                         new
@@ -483,7 +485,7 @@ namespace Vets.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Veterinarios", (string)null);
+                    b.ToTable("Veterinarios");
 
                     b.HasData(
                         new
