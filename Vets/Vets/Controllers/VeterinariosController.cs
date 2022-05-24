@@ -12,8 +12,23 @@ using Vets.Data;
 using Vets.Models;
 
 namespace Vets.Controllers {
+   /* [Authorize(Roles = "Veterinario")]  -->  apenas os utilizadores deste tipo
+    *                                          têm acesso
+    *                                          
+    * [Authorize(Roles = "Veterinario,Administrativo")]  --> utilizadores dos tipos
+    *                                                        Veterinario
+    *                                                        OU
+    *                                                        Administrativo
+    *                                                        têm acesso às funcionalidades
+    *
+    * [Authorize(Roles = "Veterinario")]
+    * [Authorize(Roles = "Administrativo")]  --> têm acessos os utilizadores dos perfis
+    *                                            Veterinario
+    *                                            E
+    *                                            Administrativo
+    */
 
-   [Authorize]
+   [Authorize(Roles = "Veterinario,Administrativo")]
    public class VeterinariosController : Controller {
       /// <summary>
       /// cria uma instancia de acesso à Base de Dados
@@ -213,7 +228,7 @@ namespace Vets.Controllers {
          // vamos usar 'variáveis de sessão' (equivalentes a 'cookies')
          // podemos guardar INT e STRING
          // - quero guardar o ID do médico veterinário
-         HttpContext.Session.SetInt32("VetID",veterinario.Id);
+         HttpContext.Session.SetInt32("VetID", veterinario.Id);
 
          return View(veterinario);
       }
@@ -275,7 +290,7 @@ namespace Vets.Controllers {
           * 'noVet.png' é necessário colocar essa pergunta 
           * na interface...
           * 
-          */ 
+          */
 
 
 
