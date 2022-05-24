@@ -47,6 +47,15 @@ namespace Vets.Data {
          // aquando da sua definição na SuperClasse
          base.OnModelCreating(modelBuilder);
 
+         // criar os perfis de utilizador da nossa app
+         modelBuilder.Entity<IdentityRole>().HasData(
+            new IdentityRole { Id = "a", Name = "Administrativo", NormalizedName = "ADMINISTRATIVO" },
+            new IdentityRole { Id = "v", Name = "Veterinario", NormalizedName = "VETERINARIO" },
+            new IdentityRole { Id = "c", Name = "Cliente", NormalizedName = "CLIENTE" }
+            );
+
+
+
          // adicionar registos que serão adicionados às
          // tabelas da BD
          modelBuilder.Entity<Veterinarios>().HasData(

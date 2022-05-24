@@ -14,11 +14,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+
 /* declara��o da exist�ncia do servi�o da Autentica��o
  * e declara��o da classe com os dados do utilizador registado */
 builder.Services.AddDefaultIdentity<ApplicationUser>(   // builder.Services.AddDefaultIdentity<IdentityUser>(
    options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+   .AddRoles<IdentityRole>() // adiciona a capacidade da App a identificar 'perfis' de utilizador
+   .AddEntityFrameworkStores<ApplicationDbContext>();
+
 
 /* declarar o servi�o das vars de sess�o */
 builder.Services.AddDistributedMemoryCache();

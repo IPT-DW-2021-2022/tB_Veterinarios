@@ -148,6 +148,9 @@ namespace Vets.Areas.Identity.Pages.Account {
             if (result.Succeeded) {
                _logger.LogInformation("User created a new account with password.");
 
+               // associar o utilizador à role 'Cliente'
+               await _userManager.AddToRoleAsync(user, "Cliente");
+
                /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                 * guardar os dados do novo DONO
                 * 1- atribuir ao novo Dono, o email
@@ -172,7 +175,7 @@ namespace Vets.Areas.Identity.Pages.Account {
                   await _userManager.DeleteAsync(user);
                   // criar msg de erro a ser enviada ao utilizador
                   ModelState.AddModelError("", "Ocorreu um erro com a criação do Utilizador");
-                  
+
                   // notificar o Admin q ocorreu um erro...
                   // escrever num ficheiro de log o erro...
                   // etc. ...
