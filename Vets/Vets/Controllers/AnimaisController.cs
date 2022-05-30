@@ -41,16 +41,29 @@ namespace Vets.Controllers {
       // GET: Animais
       public async Task<IActionResult> Index() {
 
-         // var auxiliar
-         string idUserAutenticado = _userManager.GetUserId(User);
-
          /* SELECT *
           * FROM animais a INNER JOIN donos d ON a.dono=d.Id 
-          * WHERE d.UserID = (ID DA PESSOA AUTENTICADA)
           */
          var listaDeAnimais = _context.Animais
                                       .Include(a => a.Dono)
-                                      .Where(a => a.Dono.UserID == idUserAutenticado);
+                                      .OrderBy(a => a.Nome);
+
+         if (User.IsInRole("Veterinario")) {
+            return View(await listaDeAnimais.ToListAsync());
+         }
+
+         // se chego aqui, de certeza q não sou 'veterinário'
+
+         /* SELECT *
+                   * FROM animais a INNER JOIN donos d ON a.dono=d.Id 
+                   * WHERE d.UserID = (ID DA PESSOA AUTENTICADA)
+                   */
+         // var auxiliar
+         string idUserAutenticado = _userManager.GetUserId(User);
+         // vamos restringir os dados de todos os 'animais'
+         // à pessoa q está autenticada (cliente)
+         listaDeAnimais = (IOrderedQueryable<Animais>)listaDeAnimais
+                                    .Where(a => a.Dono.UserID == idUserAutenticado);
 
          return View(await listaDeAnimais.ToListAsync());
       }

@@ -26,20 +26,32 @@ namespace Vets.Controllers {
          return View(await _context.Donos.ToListAsync());
       }
 
+
+
+
       // GET: Donos/Details/5
       public async Task<IActionResult> Details(int? id) {
          if (id == null) {
-            return NotFound();
+            return RedirectToAction("Index");
          }
 
-         var donos = await _context.Donos
-             .FirstOrDefaultAsync(m => m.Id == id);
-         if (donos == null) {
-            return NotFound();
+         /* SELECT *
+          * FROM donos d INNER JOIN animais a ON a.DonoFK=d.Id
+          * WHERE d.Id = id
+          */
+         var dono = await _context.Donos
+                                  .Include(d => d.ListaAnimais)
+                                  .Where(d => d.Id == id)
+                                  .FirstOrDefaultAsync();
+         if (dono == null) {
+            return RedirectToAction("Index");
          }
 
-         return View(donos);
+         return View(dono);
       }
+
+
+
 
       // GET: Donos/Create
       public IActionResult Create() {
