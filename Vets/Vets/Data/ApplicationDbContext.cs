@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 using Vets.Models;
@@ -6,9 +7,29 @@ using Vets.Models;
 namespace Vets.Data {
 
    /// <summary>
+   /// classe com os dados particulares do utilizador registado
+   /// </summary>
+   public class ApplicationUser : IdentityUser {
+
+      /// <summary>
+      /// nome de batismo do utilizador
+      /// </summary>
+      public string NomeDoUtilizador { get; set; }
+
+      /// <summary>
+      /// data em que o utilizador se registou
+      /// </summary>
+      public DateTime DataRegisto { get; set; }
+
+   }
+
+
+
+
+   /// <summary>
    /// esta classe funciona como a base de dados do nosso projeto
    /// </summary>
-   public class ApplicationDbContext : IdentityDbContext {
+   public class ApplicationDbContext : IdentityDbContext<ApplicationUser> {
       public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
           : base(options) {
       }
@@ -25,6 +46,15 @@ namespace Vets.Data {
          // 'importa' todo o comportamento do método, 
          // aquando da sua definição na SuperClasse
          base.OnModelCreating(modelBuilder);
+
+         // criar os perfis de utilizador da nossa app
+         modelBuilder.Entity<IdentityRole>().HasData(
+            new IdentityRole { Id = "a", Name = "Administrativo", NormalizedName = "ADMINISTRATIVO" },
+            new IdentityRole { Id = "v", Name = "Veterinario", NormalizedName = "VETERINARIO" },
+            new IdentityRole { Id = "c", Name = "Cliente", NormalizedName = "CLIENTE" }
+            );
+
+
 
          // adicionar registos que serão adicionados às
          // tabelas da BD
