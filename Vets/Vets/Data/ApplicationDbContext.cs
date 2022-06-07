@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 using Vets.Models;
@@ -6,9 +7,29 @@ using Vets.Models;
 namespace Vets.Data {
 
    /// <summary>
+   /// classe com os dados particulares do utilizador registado
+   /// </summary>
+   public class ApplicationUser : IdentityUser {
+
+      /// <summary>
+      /// nome de batismo do utilizador
+      /// </summary>
+      public string NomeDoUtilizador { get; set; }
+
+      /// <summary>
+      /// data em que o utilizador se registou
+      /// </summary>
+      public DateTime DataRegisto { get; set; }
+
+   }
+
+
+
+
+   /// <summary>
    /// esta classe funciona como a base de dados do nosso projeto
    /// </summary>
-   public class ApplicationDbContext : IdentityDbContext {
+   public class ApplicationDbContext : IdentityDbContext<ApplicationUser> {
       public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
           : base(options) {
       }
@@ -25,6 +46,15 @@ namespace Vets.Data {
          // 'importa' todo o comportamento do método, 
          // aquando da sua definição na SuperClasse
          base.OnModelCreating(modelBuilder);
+
+         // criar os perfis de utilizador da nossa app
+         modelBuilder.Entity<IdentityRole>().HasData(
+            new IdentityRole { Id = "a", Name = "Administrativo", NormalizedName = "ADMINISTRATIVO" },
+            new IdentityRole { Id = "v", Name = "Veterinario", NormalizedName = "VETERINARIO" },
+            new IdentityRole { Id = "c", Name = "Cliente", NormalizedName = "CLIENTE" }
+            );
+
+
 
          // adicionar registos que serão adicionados às
          // tabelas da BD
@@ -49,6 +79,25 @@ namespace Vets.Data {
             }
          );
 
+         modelBuilder.Entity<Donos>().HasData(
+            new Donos { Id = 1, Nome = "Luís Freitas", Sexo = "M", NIF = "813635582" },
+            new Donos { Id = 2, Nome = "Andreia Gomes", Sexo = "F", NIF = "854613462" },
+            new Donos { Id = 3, Nome = "Cristina Sousa", Sexo = "F", NIF = "265368715" },
+            new Donos { Id = 4, Nome = "Sónia Rosa", Sexo = "F", NIF = "835623190" }
+         );
+
+         modelBuilder.Entity<Animais>().HasData(
+            new Animais { Id = 1, Nome = "Bubi", Especie = "Cão", Raca = "Pastor Alemão", Peso = 24, Fotografia = "animal1.jpg", DonoFK = 1 },
+            new Animais { Id = 2, Nome = "Pastor", Especie = "Cão", Raca = "Serra Estrela", Peso = 50, Fotografia = "animal2.jpg", DonoFK = 3 },
+            new Animais { Id = 3, Nome = "Tripé", Especie = "Cão", Raca = "Serra Estrela", Peso = 4, Fotografia = "animal3.jpg", DonoFK = 2 },
+            new Animais { Id = 4, Nome = "Saltador", Especie = "Cavalo", Raca = "Lusitana", Peso = 580, Fotografia = "animal4.jpg", DonoFK = 3 },
+            new Animais { Id = 5, Nome = "Tareco", Especie = "Gato", Raca = "siamês", Peso = 1, Fotografia = "animal5.jpg", DonoFK = 3 },
+            new Animais { Id = 6, Nome = "Cusca", Especie = "Cão", Raca = "Labrador", Peso = 45, Fotografia = "animal6.jpg", DonoFK = 2 },
+            new Animais { Id = 7, Nome = "Morde Tudo", Especie = "Cão", Raca = "Dobermann", Peso = 39, Fotografia = "animal7.jpg", DonoFK = 4 },
+            new Animais { Id = 8, Nome = "Forte", Especie = "Cão", Raca = "Rottweiler", Peso = 20, Fotografia = "animal8.jpg", DonoFK = 2 },
+            new Animais { Id = 9, Nome = "Castanho", Especie = "Vaca", Raca = "Mirandesa", Peso = 652, Fotografia = "animal9.jpg", DonoFK = 3 },
+            new Animais { Id = 10, Nome = "Saltitão", Especie = "Gato", Raca = "Persa", Peso = 2, Fotografia = "animal10.jpg", DonoFK = 1 }
+         );
       }
 
 

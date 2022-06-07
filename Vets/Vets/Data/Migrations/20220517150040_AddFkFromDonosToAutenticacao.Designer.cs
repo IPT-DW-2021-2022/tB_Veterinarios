@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vets.Data;
 
@@ -11,9 +12,10 @@ using Vets.Data;
 namespace Vets.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220517150040_AddFkFromDonosToAutenticacao")]
+    partial class AddFkFromDonosToAutenticacao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,29 +49,6 @@ namespace Vets.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "a",
-                            ConcurrencyStamp = "a3868cb1-023b-40af-b887-be3a1080b47f",
-                            Name = "Administrativo",
-                            NormalizedName = "ADMINISTRATIVO"
-                        },
-                        new
-                        {
-                            Id = "v",
-                            ConcurrencyStamp = "19170ee0-f608-4557-b7e1-46002a0434b2",
-                            Name = "Veterinario",
-                            NormalizedName = "VETERINARIO"
-                        },
-                        new
-                        {
-                            Id = "c",
-                            ConcurrencyStamp = "8f1a2089-c1f8-497a-a843-da7e983e74a2",
-                            Name = "Cliente",
-                            NormalizedName = "CLIENTE"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -286,119 +265,7 @@ namespace Vets.Data.Migrations
 
                     b.HasIndex("DonoFK");
 
-                    b.ToTable("Animais", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DataNascimento = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DonoFK = 1,
-                            Especie = "Cão",
-                            Fotografia = "animal1.jpg",
-                            Nome = "Bubi",
-                            Peso = 24.0,
-                            Raca = "Pastor Alemão"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            DataNascimento = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DonoFK = 3,
-                            Especie = "Cão",
-                            Fotografia = "animal2.jpg",
-                            Nome = "Pastor",
-                            Peso = 50.0,
-                            Raca = "Serra Estrela"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            DataNascimento = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DonoFK = 2,
-                            Especie = "Cão",
-                            Fotografia = "animal3.jpg",
-                            Nome = "Tripé",
-                            Peso = 4.0,
-                            Raca = "Serra Estrela"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            DataNascimento = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DonoFK = 3,
-                            Especie = "Cavalo",
-                            Fotografia = "animal4.jpg",
-                            Nome = "Saltador",
-                            Peso = 580.0,
-                            Raca = "Lusitana"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            DataNascimento = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DonoFK = 3,
-                            Especie = "Gato",
-                            Fotografia = "animal5.jpg",
-                            Nome = "Tareco",
-                            Peso = 1.0,
-                            Raca = "siamês"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            DataNascimento = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DonoFK = 2,
-                            Especie = "Cão",
-                            Fotografia = "animal6.jpg",
-                            Nome = "Cusca",
-                            Peso = 45.0,
-                            Raca = "Labrador"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            DataNascimento = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DonoFK = 4,
-                            Especie = "Cão",
-                            Fotografia = "animal7.jpg",
-                            Nome = "Morde Tudo",
-                            Peso = 39.0,
-                            Raca = "Dobermann"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            DataNascimento = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DonoFK = 2,
-                            Especie = "Cão",
-                            Fotografia = "animal8.jpg",
-                            Nome = "Forte",
-                            Peso = 20.0,
-                            Raca = "Rottweiler"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            DataNascimento = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DonoFK = 3,
-                            Especie = "Vaca",
-                            Fotografia = "animal9.jpg",
-                            Nome = "Castanho",
-                            Peso = 652.0,
-                            Raca = "Mirandesa"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            DataNascimento = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DonoFK = 1,
-                            Especie = "Gato",
-                            Fotografia = "animal10.jpg",
-                            Nome = "Saltitão",
-                            Peso = 2.0,
-                            Raca = "Persa"
-                        });
+                    b.ToTable("Animais");
                 });
 
             modelBuilder.Entity("Vets.Models.Consultas", b =>
@@ -430,7 +297,7 @@ namespace Vets.Data.Migrations
 
                     b.HasIndex("VeterinarioFK");
 
-                    b.ToTable("Consultas", (string)null);
+                    b.ToTable("Consultas");
                 });
 
             modelBuilder.Entity("Vets.Models.Donos", b =>
@@ -463,37 +330,7 @@ namespace Vets.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Donos", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            NIF = "813635582",
-                            Nome = "Luís Freitas",
-                            Sexo = "M"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            NIF = "854613462",
-                            Nome = "Andreia Gomes",
-                            Sexo = "F"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            NIF = "265368715",
-                            Nome = "Cristina Sousa",
-                            Sexo = "F"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            NIF = "835623190",
-                            Nome = "Sónia Rosa",
-                            Sexo = "F"
-                        });
+                    b.ToTable("Donos");
                 });
 
             modelBuilder.Entity("Vets.Models.Veterinarios", b =>
@@ -515,7 +352,7 @@ namespace Vets.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Veterinarios", (string)null);
+                    b.ToTable("Veterinarios");
 
                     b.HasData(
                         new

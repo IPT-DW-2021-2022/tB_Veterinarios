@@ -1,0 +1,87 @@
+﻿@model IEnumerable<Vets.Models.Animais>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Lista de Animais</h1>
+@if (User.IsInRole("Cliente")) {
+    <h4>@Model.FirstOrDefault().Dono.Nome</h4>
+}
+
+@if (User.IsInRole("Veterinario") || User.IsInRole("Administrativo")) {
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Raca)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Especie)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataNascimento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Peso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fotografia)
+            </th>
+            @if (User.IsInRole("Veterinario")) {
+                <th>
+                    @Html.DisplayNameFor(model => model.Dono)
+                </th>
+            }
+            @if (User.IsInRole("Veterinario") || User.IsInRole("Administrativo")) {
+                <th></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Raca)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Especie)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataNascimento)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Peso)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Fotografia)
+                </td>
+                @if (User.IsInRole("Veterinario")) {
+                    <td>
+                        <a asp-controller="Donos" asp-action="Details" asp-route-id="@item.DonoFK">
+                            @Html.DisplayFor(modelItem => item.Dono.Nome)
+                        </a>
+                    </td>
+                }
+                @if (User.IsInRole("Veterinario") || User.IsInRole("Administrativo")) {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
