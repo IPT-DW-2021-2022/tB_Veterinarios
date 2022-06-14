@@ -20,11 +20,14 @@ namespace Vets.Controllers.API {
          _context = context;
       }
 
+
+
       // GET: api/AnimaisAPI
       [HttpGet]
       public async Task<ActionResult<IEnumerable<AnimaisViewModel>>> GetAnimais() {
          return await _context.Animais
                               .Include(a => a.Dono)
+                              .OrderByDescending(a=>a.Id)
                               .Select(a => new AnimaisViewModel {
                                  Id = a.Id,
                                  Nome = a.Nome,
@@ -84,11 +87,34 @@ namespace Vets.Controllers.API {
       // POST: api/AnimaisAPI
       // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
       [HttpPost]
-      public async Task<ActionResult<Animais>> PostAnimais(Animais animais) {
-         _context.Animais.Add(animais);
-         await _context.SaveChangesAsync();
+      public async Task<ActionResult<Animais>> PostAnimais([FromForm] Animais animal, IFormFile uploadFotoAnimal) {
 
-         return CreatedAtAction("GetAnimais", new { id = animais.Id }, animais);
+         // o anotador [FromForm] informa o ASP .NET que os dados são fornecidos 
+         // em FormData
+
+         /*
+          * TAREFAS A EXECUTAR:
+          * 1. validar os dados
+          * 2. inserir a foto no disco rígido (semelhante ao feito no Veterinário)
+          * 3. usar Try-Catch
+          */
+
+
+         animal.Fotografia = "noVet.jpg";
+
+
+         // 3.
+         try {
+            _context.Animais.Add(animal);
+            await _context.SaveChangesAsync();
+         }
+         catch (Exception) {
+
+            throw;
+         }
+
+
+         return CreatedAtAction("GetAnimais", new { id = animal.Id }, animal);
       }
 
 
